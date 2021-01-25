@@ -50,4 +50,13 @@ public class Article {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public Article(String title, String text, Status status, Date createdAt, Date updatedAt, User user) {
+        this.title = title;
+        this.text = text;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.user = user;
+    }
 }
