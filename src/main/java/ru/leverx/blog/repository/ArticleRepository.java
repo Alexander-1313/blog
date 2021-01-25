@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Status;
+import ru.leverx.blog.entity.User;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     List<Article> findArticleByStatus(Status status);
+
+    List<Article> findArticleByUser(User user);
+
+    List<Article> findArticleByTitleAndUser(String title, User user);
 
     @Transactional
     void deleteArticlesById(Integer id);
