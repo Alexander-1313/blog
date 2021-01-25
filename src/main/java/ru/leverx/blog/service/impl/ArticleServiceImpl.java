@@ -43,4 +43,9 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> findByStatus(Status status) {
         return repository.findArticleByStatus(status);
     }
+
+    @Override
+    public void deleteById(Integer id) {
+        repository.deleteArticlesById(id);
+    }
 }

@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/articles")
+@RequestMapping("/users")
 public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
 
-    @PostMapping("/")
+    @PostMapping("/articles")
     public Article addPost(@RequestParam("title") String title,
                            @RequestParam("text") String text,
                            @RequestParam("status") String status){
@@ -27,9 +27,20 @@ public class ArticleController {
         return article;
     }
 
-    @GetMapping("/")
+    @GetMapping("/articles")
     public List<Article> getAllPublicPosts(){
 
         return articleService.findByStatus(Status.PUBLIC);
     }
+
+    @DeleteMapping("/articles/{id}")
+    public void deleteArticleById(@PathVariable String id){
+        articleService.deleteById(Integer.parseInt(id));
+    }
+
+    /**
+     *добавить редактирование статьи
+     * получить посты авторизованного пользователя
+     * фильтрация
+     */
 }

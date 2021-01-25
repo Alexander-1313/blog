@@ -16,4 +16,6 @@ public interface ArticleService {
     Article findById(Integer id);
 
     List<Article> findByStatus(Status status);
+
+    void deleteById(Integer id);
 }
