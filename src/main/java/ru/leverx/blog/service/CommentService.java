@@ -4,6 +4,7 @@ import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Comment;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CommentService {
 
@@ -16,4 +17,6 @@ public interface CommentService {
     List<Comment> findAll();
 
     List<Comment> findCommentByArticle(Article article);
+
+    List<Comment> filterComments(Map<String, String> allRequestParams, String articleId);
 }

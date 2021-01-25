@@ -28,4 +28,11 @@ public class Comment {
 
     public Comment() {
     }
+
+    public Comment(String text, Date createdAt, User commentUser, Article article) {
+        this.text = text;
+        this.createdAt = createdAt;
+        this.commentUser = commentUser;
+        this.article = article;
+    }
 }
