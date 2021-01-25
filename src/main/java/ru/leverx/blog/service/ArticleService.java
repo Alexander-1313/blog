@@ -1,9 +1,12 @@
 package ru.leverx.blog.service;
 
 import ru.leverx.blog.entity.Article;
+import ru.leverx.blog.entity.Comment;
 import ru.leverx.blog.entity.Status;
+import ru.leverx.blog.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ArticleService {
 
@@ -17,5 +20,12 @@ public interface ArticleService {
 
     List<Article> findByStatus(Status status);
 
+    List<Article> findByUser(User user);
+
     void deleteById(Integer id);
+
+    void updateById(Integer id, String title, String text, String status);
+
+    List<Article> filterArticles(Map<String, String> allRequestParams);
+
 }
