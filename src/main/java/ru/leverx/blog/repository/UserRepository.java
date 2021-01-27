@@ -7,4 +7,5 @@ import ru.leverx.blog.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
+    User findByPasswordAndEmail(String password, String email);
 }

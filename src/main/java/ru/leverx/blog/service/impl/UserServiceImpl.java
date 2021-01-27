@@ -18,6 +18,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository repository) {
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(user);
         return true;
     }
@@ -55,5 +57,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
        return null;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
+    @Override
+    public User findByPasswordAndEmail(String password, String email) {
+        User user = findByEmail(email);
+        if (user != null) {
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
+            }
+        }
+        return null;
     }
 }
