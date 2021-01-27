@@ -1,5 +1,6 @@
 package ru.leverx.blog.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -8,51 +9,69 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.*;
+import ru.leverx.blog.configuration.jwt.JwtProvider;
 import ru.leverx.blog.entity.User;
 import ru.leverx.blog.service.UserService;
+import ru.leverx.blog.util.RequestUtil;
+import ru.leverx.blog.util.View;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
 @RestController
 public class RegistrationController {
 
-    @Autowired
     private UserService service;
-
-    @Qualifier("messageSource")
-    @Autowired
-    private MessageSource messages;
+    private JwtProvider jwtProvider;
+    private RequestUtil requestUtil;
 
     @Autowired
-    ApplicationEventPublisher eventPublisher;
+    public RegistrationController(UserService service, JwtProvider jwtProvider, RequestUtil requestUtil) {
+        this.service = service;
+        this.jwtProvider = jwtProvider;
+        this.requestUtil = requestUtil;
+    }
 
-    private final JavaMailSender javaMailSender = new JavaMailSenderImpl();
-
-    @GetMapping("/")
+    @JsonView(View.UI.class)
+    @GetMapping
     public List<User> showAll() {
         return service.findAll();
     }
 
-    @PostMapping("/add")
+    @PostMapping("/registration")
     public void registerUser(@RequestParam("firstName") String firstName,
                              @RequestParam("lastName") String lastName,
                              @RequestParam("email") String email,
                              @RequestParam("password") String password) {
-        sendEmail(email);
         service.save(new User(firstName, lastName, password, email, new Date()));
     }
 
-    private void sendEmail(String email) {
+    @GetMapping("/auth")
+    public String auth(@RequestParam("email") String email,
+                     @RequestParam("password") String password){
 
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(email);
-
-        msg.setSubject("Testing from Spring Boot");
-        msg.setText("Hello World n Spring Boot Email");
-
-        javaMailSender.send(msg);
-
+        User user = service.findByPasswordAndEmail(password, email);
+        String token = jwtProvider.generateToken(user.getEmail());
+        return token;
     }
+
+    @JsonView(View.UI.class)
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable String id,
+                        HttpServletRequest request){
+
+        if(requestUtil.isConfirmUser(request, id)){
+            return service.getById(Integer.parseInt(id));
+        }
+        return null;
+    }
+
+    /**
+     * auth/forgot_password/{email} POST
+     * auth/reset/{new paswrod}
+     * auth/check_code/{code}
+     */
+
 
 }
