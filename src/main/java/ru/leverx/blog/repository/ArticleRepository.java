@@ -19,6 +19,11 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     List<Article> findArticleByTitleAndUser(String title, User user);
 
+    Article findArticleByIdAndUser(Integer id, User user);
+
+    @Transactional
+    void deleteArticlesByIdAndUser(Integer id, User user);
+
     @Transactional
     void deleteArticlesById(Integer id);
 }

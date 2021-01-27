@@ -61,21 +61,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void updateById(Integer id, String title, String text, String status) {
-        Article article = findById(id);
-        if (!title.isEmpty()){
-            article.setTitle(title);
-        }
-        if (!text.isEmpty()){
-            article.setText(text);
-        }
-        if (!status.isEmpty()){
-            article.setStatus(Status.valueOf(status));
-        }
+    public void updateById(Integer id, Integer userId, String title, String text, String status) {
+        Article article = findArticleByIdAndUser(id, service.getById(userId));
+        if(article != null) {
+            if (title != null) {
+                article.setTitle(title);
+            }
+            if (text != null) {
+                article.setText(text);
+            }
+            if (status != null) {
+                article.setStatus(Status.valueOf(status));
+            }
 
-        article.setUpdatedAt(new Date());
+            article.setUpdatedAt(new Date());
 
-        repository.save(article);
+            repository.save(article);
+        }
     }
 
     private List<Article> findArticleByTitleAndUser(String title, User user) {
@@ -120,11 +122,25 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> filterArticles(Map<String, String> allRequestParams) {
-        List<Article> articles = findArticleByTitleAndUser(allRequestParams.get("title"), service.getById(Integer.parseInt(allRequestParams.get("author"))));
+        String title = allRequestParams.get("title");
+        String author = allRequestParams.get("author");
+
+        List<Article> articles = findArticleByTitleAndUser(allRequestParams.get(title), service.getById(Integer.parseInt(allRequestParams.get(author))));
         sort(articles, allRequestParams.get("sort"), allRequestParams.get("order"));
         articles = filterArticlesWithSkipAndLimit(articles, Integer.parseInt(allRequestParams.get("skip")), Integer.parseInt(allRequestParams.get("limit")));
+        System.out.println(allRequestParams.size());
 
         return articles;
+    }
+
+    @Override
+    public void deleteArticlesByIdAndUser(Integer id, User user) {
+        repository.deleteArticlesByIdAndUser(id, user);
+    }
+
+    @Override
+    public Article findArticleByIdAndUser(Integer id, User user) {
+        return repository.findArticleByIdAndUser(id, user);
     }
 
 

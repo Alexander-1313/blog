@@ -24,8 +24,12 @@ public interface ArticleService {
 
     void deleteById(Integer id);
 
-    void updateById(Integer id, String title, String text, String status);
+    void updateById(Integer id, Integer userId, String title, String text, String status);
 
     List<Article> filterArticles(Map<String, String> allRequestParams);
+
+    void deleteArticlesByIdAndUser(Integer id, User user);
+
+    Article findArticleByIdAndUser(Integer id, User user);
 
 }
