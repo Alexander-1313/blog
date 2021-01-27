@@ -1,6 +1,8 @@
 package ru.leverx.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import ru.leverx.blog.util.View;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,17 +15,28 @@ public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.UI.class)
     private Integer id;
+
     @Column(name = "title")
+    @JsonView(View.UI.class)
     private String title;
+
     @Column(name = "text")
+    @JsonView(View.UI.class)
     private String text;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @JsonView(View.UI.class)
     private Status status;
+
     @Column(name = "created_at")
+    @JsonView(View.UI.class)
     private Date createdAt;
+
     @Column(name = "updated_at")
+    @JsonView(View.UI.class)
     private Date updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -31,13 +44,16 @@ public class Article {
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @JsonView(View.REST.class)
     private Set<Tag> tags;
 
     @OneToOne(mappedBy = "article")
+    @JsonView(View.REST.class)
     private Comment comment;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JsonView(View.REST.class)
     private User user;
 
     public Article() {
