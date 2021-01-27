@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.leverx.blog.comparator.CommentComparator;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Comment;
+import ru.leverx.blog.entity.User;
 import ru.leverx.blog.repository.CommentRepository;
 import ru.leverx.blog.service.ArticleService;
 import ru.leverx.blog.service.CommentService;
@@ -72,6 +73,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return filteredComments;
+    }
+
+    @Override
+    public void deleteCommentByIdAndArticleAndCommentUser(Integer id, Article article, User user) {
+        repository.deleteCommentByIdAndArticleAndCommentUser(id, article, user);
+    }
+
+    @Override
+    public Comment findCommentByCommentUserAndArticleAndId(User commentUser, Article article, Integer id) {
+        return repository.findCommentByCommentUserAndArticleAndId(commentUser, article, id);
     }
 
     private List<Comment> filterByAuthorId(List<Comment> comments, Integer id){
