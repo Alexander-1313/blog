@@ -33,18 +33,18 @@ public class RequestUtil {
         return null;
     }
 
-    public static String generateToken(String email) {
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return Jwts.builder()
-                .setSubject(email)
-                .setExpiration(date)
-                .signWith(SignatureAlgorithm.HS512, "rybak")
-                .compact();
-    }
+//    public static String generateToken(String email) {
+//        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        return Jwts.builder()
+//                .setSubject(email)
+//                .setExpiration(date)
+//                .signWith(SignatureAlgorithm.HS512, "rybak")
+//                .compact();
+//    }
 
     public boolean isConfirmUser(HttpServletRequest request, String id){
         String requestToken = RequestUtil.getTokenFromRequest(request);
-        String generatedTokenFromRequestId = jwtProvider.generateToken(userService.getById(Integer.parseInt(id)).getEmail());
+        String generatedTokenFromRequestId = jwtProvider.generateToken(userService.findById(Integer.parseInt(id)).getEmail());
         return requestToken.equals(generatedTokenFromRequestId);
     }
 }
