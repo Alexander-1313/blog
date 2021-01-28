@@ -41,7 +41,7 @@ public class ArticleController {
         Article article = null;
 
         if(requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.getById(Integer.parseInt(userId));
+            User user = userService.findById(Integer.parseInt(userId));
             article = new Article(title, text, Status.valueOf(status), new Date(), new Date(), user);
             articleService.save(article);
         }
@@ -54,7 +54,8 @@ public class ArticleController {
                                            @RequestParam Map<String, String> allRequestParam) { //TODO
 
 //        List<Article> articles = articleService.findByStatus(Status.PUBLIC);
-            return articleService.filterArticles(allRequestParam);
+//            return articleService.filterArticles(allRequestParam);
+        return null;
     }
 
     @JsonView(View.UI.class)
@@ -63,7 +64,7 @@ public class ArticleController {
                                   @PathVariable String id,
                                   HttpServletRequest request) {
         if (requestUtil.isConfirmUser(request, userId)) {
-            articleService.deleteArticlesByIdAndUser(Integer.parseInt(id), userService.getById(Integer.parseInt(userId)));
+            articleService.deleteById(Integer.parseInt(userId), Integer.parseInt(id));
         }
     }
 
@@ -87,7 +88,7 @@ public class ArticleController {
                                           HttpServletRequest request){
 
         if (requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.getById(Integer.parseInt(userId));
+            User user = userService.findById(Integer.parseInt(userId));
             return articleService.findByUser(user);
         }else{
             return null;
