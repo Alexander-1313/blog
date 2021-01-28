@@ -2,7 +2,6 @@ package ru.leverx.blog.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Comment;
@@ -42,7 +41,7 @@ public class CommentController {
                            @RequestParam("text") String text,
                            HttpServletRequest request){
         if(requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.getById(Integer.parseInt(userId));
+            User user = userService.findById(Integer.parseInt(userId));
             Article article = articleService.findById(Integer.parseInt(articleId));
             Comment comment = new Comment(text, new Date(), user, article);
             commentService.save(comment);
@@ -55,16 +54,17 @@ public class CommentController {
                                               @PathVariable String articleId,
                                               @RequestParam Map<String, String> allRequestParam){ //TODO
 
-        return commentService.filterComments(allRequestParam, articleId);
+//        return commentService.filterComments(allRequestParam, articleId);
+        return null;
     }
 
     @GetMapping("/{commentId}")
     @JsonView(View.UI.class)
     public Comment getCommentById(@PathVariable String userId,
                                   @PathVariable String articleId,
-                                  @PathVariable String commentId){
+                                  @PathVariable String commentId){ // валидация статьи и коммента
 
-        User user = userService.getById(Integer.parseInt(userId));
+        User user = userService.findById(Integer.parseInt(userId));
         Article article = articleService.findById(Integer.parseInt(articleId));
 
         return commentService.findById(Integer.parseInt(commentId));
@@ -79,7 +79,7 @@ public class CommentController {
 
         if(requestUtil.isConfirmUser(request, userId)) {
             Article article = articleService.findById(Integer.parseInt(articleId));
-            User user = userService.getById(Integer.parseInt(userId));
+            User user = userService.findById(Integer.parseInt(userId));
             commentService.deleteCommentByIdAndArticleAndCommentUser(Integer.parseInt(commentId), article, user);
         }
     }
