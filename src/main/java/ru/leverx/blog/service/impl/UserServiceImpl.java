@@ -1,8 +1,6 @@
 package ru.leverx.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.leverx.blog.entity.User;
@@ -14,54 +12,37 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
-
     @Autowired
-    PasswordEncoder bCryptPasswordEncoder;
+    private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.getOne(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override
     public boolean save(User user) {
-        User userFromDB = repository.findByEmail(user.getEmail());
+        User userFromDB = userRepository.findByEmail(user.getEmail());
 
         if (userFromDB != null) {
             return false;
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        repository.save(user);
+        userRepository.save(user);
         return true;
-    }
-
-    @Override
-    public void delete(User user) {
-        repository.delete(user);
-    }
-
-    @Override
-    public List<User> findAll() {
-        return repository.findAll();
-    }
-
-    @Override
-    public User getById(Integer id) {
-        return repository.getOne(id);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-       return null;
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        return repository.findByEmail(email);
     }
 
     @Override
@@ -73,5 +54,25 @@ public class UserServiceImpl implements UserService {
             }
         }
         return null;
+    }
+
+    @Override
+    public void registerByEmail(String email) {
+        User user = findByEmail(email);
+
+        if(user != null) {
+            user.setEnabled(true);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public void resetPasswordByEmail(String email, String password) {
+        User user = findByEmail(email);
+
+        if(user != null && user.isEnabled()) {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+        }
     }
 }
