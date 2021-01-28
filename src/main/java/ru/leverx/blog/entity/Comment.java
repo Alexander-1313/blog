@@ -25,12 +25,12 @@ public class Comment {
     @JsonView(View.UI.class)
     private Date createdAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     @JsonView(View.UI.class)
     private User commentUser;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     @JsonView(View.UI.class)
     private Article article;

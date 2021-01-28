@@ -47,11 +47,11 @@ public class Article {
     @JsonView(View.REST.class)
     private Set<Tag> tags;
 
-    @OneToOne(mappedBy = "article")
+    @OneToMany(mappedBy = "article")
     @JsonView(View.REST.class)
-    private Comment comment;
+    private Set<Comment> comment;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     @JsonView(View.REST.class)
     private User user;

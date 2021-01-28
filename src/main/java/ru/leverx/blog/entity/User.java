@@ -6,6 +6,7 @@ import ru.leverx.blog.util.View;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "User")
@@ -32,21 +33,24 @@ public class User {
     @JsonView(View.UI.class)
     private Date createdAt;
 
-    @JsonView(View.REST.class)
-    @OneToOne(mappedBy = "commentUser")
-    private Comment comment;
+    @Column(name = "enabled")
+    @JsonView(View.UI.class)
+    private boolean enabled;
 
     @JsonView(View.REST.class)
-    @OneToOne(mappedBy = "user")
-    private Article article;
+    @OneToMany(mappedBy = "commentUser")
+    private Set<Comment> comment;
+
+    @JsonView(View.REST.class)
+    @OneToMany(mappedBy = "user")
+    private Set<Article> article;
 
     public User() {
     }
 
     public User(String email, String password) {
         this.password = password;
-        this.email = email;
-    }
+        this.email = email;   }
 
     public User(String firstName, String lastName, String password, String email, Date createdAt) {
         this.firstName = firstName;
@@ -56,7 +60,7 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public User(Integer id, String firstName, String lastName, String password, String email, Date createdAt, Comment comment, Article article) {
+    public User(Integer id, String firstName, String lastName, String password, String email, Date createdAt, Set<Comment> comment, Set<Article> article) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
