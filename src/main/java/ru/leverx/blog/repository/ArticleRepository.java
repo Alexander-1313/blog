@@ -22,4 +22,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Modifying
     @Query("DELETE FROM Article a WHERE a.id = :id")
     void deleteArticle(Integer id);
+
+    @Modifying
+    @Query(value = "SELECT * FROM article a WHERE a.author_id = ?1 AND a.status = \"PUBLIC\" ORDER BY ?2 ?3 LIMIT ?4, ?5", nativeQuery = true)
+    List<Article> filterWithoutQ(Integer author, String fieldName, String order, Integer skip, Integer limit);
+
+    @Modifying
+    @Query(value = "SELECT * FROM article a WHERE a.title = ?1 AND a.author_id = ?2 AND a.status = \"PUBLIC\" ORDER BY ?3 ?4 LIMIT ?5, ?6", nativeQuery = true)
+    List<Article> filterWithQ(String title, Integer author, String fieldName, String order, Integer skip, Integer limit);
 }
