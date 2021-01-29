@@ -78,6 +78,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public Article findByTitle(String title) {
+        return articleRepository.findByTitle(title);
+    }
+
+    @Override
     public List<Article> filter(Integer skip, Integer limit, String q, Integer authorId, String fieldName, String order, Integer authorIdFromRequest) {
         skip = (skip != null ? skip : 0);
         limit = (limit != null ? limit : 0);

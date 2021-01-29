@@ -18,6 +18,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     Article findByIdAndUser(Integer id, User user);
 
+    Article findByTitle(String title);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Article a WHERE a.id = :id")

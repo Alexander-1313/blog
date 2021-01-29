@@ -18,5 +18,7 @@ public interface ArticleService {
 
     Article findById(Integer id);
 
+    Article findByTitle(String title);
+
     List<Article> filter(Integer skip, Integer limit, String q, Integer authorId, String fieldName, String order, Integer authorIdFromRequest);
 }
