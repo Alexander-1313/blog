@@ -53,9 +53,15 @@ public class ArticleController {
     public List<Article> getAllPublicPosts(@PathVariable String userId,
                                            @RequestParam Map<String, String> allRequestParam) { //TODO
 
-//        List<Article> articles = articleService.findByStatus(Status.PUBLIC);
-//            return articleService.filterArticles(allRequestParam);
-        return null;
+        Integer skip = Integer.parseInt(allRequestParam.get("skip"));
+        Integer limit = Integer.parseInt(allRequestParam.get("limit"));
+        Integer authorId = Integer.parseInt(allRequestParam.get("authorId"));
+        String q = allRequestParam.get("q");
+        String fieldName = allRequestParam.get("fieldName");
+        String order = allRequestParam.get("order");
+
+
+            return articleService.filter(skip, limit, q, authorId, fieldName, order, Integer.parseInt(userId));
     }
 
     @JsonView(View.UI.class)
@@ -76,7 +82,6 @@ public class ArticleController {
                                 @RequestParam("text") String text,
                                 @RequestParam("status") String status,
                                 HttpServletRequest request) {
-
         if (requestUtil.isConfirmUser(request, userId)) {
             articleService.updateById(Integer.parseInt(id), Integer.parseInt(userId), title, text, status);
         }
