@@ -54,8 +54,14 @@ public class CommentController {
                                               @PathVariable String articleId,
                                               @RequestParam Map<String, String> allRequestParam){ //TODO
 
-//        return commentService.filterComments(allRequestParam, articleId);
-        return null;
+        Integer skip = Integer.parseInt(allRequestParam.get("skip"));
+        Integer limit = Integer.parseInt(allRequestParam.get("limit"));
+        Integer authorId = Integer.parseInt(allRequestParam.get("authorId"));
+        String q = allRequestParam.get("q");
+        String fieldName = allRequestParam.get("fieldName");
+        String order = allRequestParam.get("order");
+
+        return commentService.filter(skip, limit, q, authorId, fieldName, order, Integer.parseInt(userId));
     }
 
     @GetMapping("/{commentId}")
