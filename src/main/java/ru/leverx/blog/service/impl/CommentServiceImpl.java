@@ -12,17 +12,14 @@ import ru.leverx.blog.service.ArticleService;
 import ru.leverx.blog.service.CommentService;
 import ru.leverx.blog.service.UserService;
 
+import java.util.List;
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final ArticleService articleService;
     private final UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ArticleRepository articleRepository;
 
     @Autowired
     public CommentServiceImpl(CommentRepository repository, ArticleService articleService, UserService userService) {
@@ -49,6 +46,22 @@ public class CommentServiceImpl implements CommentService {
 
         if(comment != null){
             commentRepository.deleteComment(id);
+        }
+    }
+
+    @Override
+    public List<Comment> filter(Integer skip, Integer limit, String q, Integer authId, String fieldName, String order, Integer authorIdFromRequest) {
+        skip = (skip != null ? skip : 0);
+        limit = (limit != null ? limit : 0);
+        authId = (authId != null ? authId : authorIdFromRequest);
+        fieldName = (fieldName != null ? fieldName : "id");
+        order = (order.equalsIgnoreCase("asc") ? "asc" : "desc");
+
+        if (q == null) {
+            return commentRepository.filterWithoutQ(authId, fieldName, order, skip, limit);
+        }else{
+            Article article = articleService.findByTitle(q);
+            return commentRepository.filterWithQ(authId, article.getId(), fieldName, order, skip, limit);
         }
     }
 }

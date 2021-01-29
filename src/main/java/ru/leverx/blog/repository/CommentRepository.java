@@ -20,4 +20,12 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Modifying
     @Query("DELETE FROM Comment c WHERE c.id = :id")
     void deleteComment(Integer id);
+
+    @Modifying
+    @Query(value = "SELECT * FROM comment c WHERE c.author_id = ?1 ORDER BY ?2 ?3 LIMIT ?4, ?5", nativeQuery = true)
+    List<Comment> filterWithoutQ(Integer authorId, String fieldName, String order, Integer skip, Integer limit);
+
+    @Modifying
+    @Query(value = "SELECT * FROM comment c WHERE c.author_id = ?1 AND c.post_id = ?2 ORDER BY ?3 ?4 LIMIT ?5, ?6", nativeQuery = true)
+    List<Comment> filterWithQ(Integer authorId, Integer postId, String fieldName, String order, Integer skip, Integer limit);
 }
