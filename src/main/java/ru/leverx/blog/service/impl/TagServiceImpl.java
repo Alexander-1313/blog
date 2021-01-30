@@ -6,6 +6,8 @@ import ru.leverx.blog.entity.Tag;
 import ru.leverx.blog.repository.TagRepository;
 import ru.leverx.blog.service.TagService;
 
+import java.util.List;
+
 @Service
 public class TagServiceImpl implements TagService {
 
@@ -25,5 +27,15 @@ public class TagServiceImpl implements TagService {
     @Override
     public Tag findByName(String name) {
         return tagRepository.findByName(name);
+    }
+
+    @Override
+    public long getCountTagById(Integer id) {
+        return tagRepository.countTag(id);
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return tagRepository.findAll();
     }
 }
