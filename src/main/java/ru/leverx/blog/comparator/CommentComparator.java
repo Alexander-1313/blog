@@ -16,5 +16,11 @@ public enum CommentComparator implements Comparator<Comment> {
         public int compare(Comment o1, Comment o2) {
             return o1.getCreatedAt().compareTo(o2.getCreatedAt());
         }
+    },
+    ID{
+        @Override
+        public int compare(Comment o1, Comment o2) {
+            return o1.getId().compareTo(o2.getId());
+        }
     }
 }

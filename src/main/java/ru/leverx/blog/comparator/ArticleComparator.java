@@ -34,5 +34,11 @@ public enum ArticleComparator implements Comparator<Article> {
         public int compare(Article o1, Article o2) {
             return o1.getUpdatedAt().compareTo(o2.getUpdatedAt());
         }
+    },
+    ID{
+        @Override
+        public int compare(Article o1, Article o2) {
+            return o1.getId().compareTo(o2.getId());
+        }
     }
 }
