@@ -76,6 +76,6 @@ public class RequestUtil {
         if(str != null && str.matches("[-+]?\\d+")){
             return Integer.parseInt(str);
         }
-        return 0;
+        return null;
     }
 }

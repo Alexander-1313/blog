@@ -93,6 +93,8 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> filter(Integer skip, Integer limit, String q, Integer authorId, String fieldName, String order, Integer authorIdFromRequest) {
         skip = (skip != null ? skip : 0);
         limit = (limit != null ? limit : 0);
+        System.out.println("authorIdFromRequest = " + authorIdFromRequest);
+        System.out.println("authorId = " + authorId);
         authorId = (authorId != null ? authorId : authorIdFromRequest);
         fieldName = (fieldName != null ? fieldName : "id");
         if(order != null) {
@@ -100,7 +102,6 @@ public class ArticleServiceImpl implements ArticleService {
         }else{
             order = "asc";
         }
-        
         List<Article> articles;
 
         if (q == null) {
@@ -108,6 +109,7 @@ public class ArticleServiceImpl implements ArticleService {
         } else {
             articles = articleRepository.filterWithQ(q, authorId, fieldName, order, skip, limit);
         }
+        System.out.println(articles == null);
 
         if (order.equals("asc")) {
             return articles.stream().sorted(ArticleComparator.valueOf(fieldName.toUpperCase(Locale.ROOT))).collect(Collectors.toList());

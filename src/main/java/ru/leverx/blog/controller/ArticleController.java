@@ -73,7 +73,7 @@ public class ArticleController {
         String fieldName = allRequestParam.get("fieldName");
         String order = allRequestParam.get("order");
 
-            return articleService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.getUserIdByRequest(request));
+        return articleService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.getUserIdByRequest(request));
     }
 
     @JsonView(View.UI.class)
