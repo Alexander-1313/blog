@@ -5,11 +5,14 @@ import org.springframework.data.jpa.repository.query.JpaQueryCreator;
 import org.springframework.stereotype.Service;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Status;
+import ru.leverx.blog.entity.Tag;
 import ru.leverx.blog.entity.User;
 import ru.leverx.blog.repository.ArticleRepository;
+import ru.leverx.blog.repository.TagRepository;
 import ru.leverx.blog.repository.UserRepository;
 import ru.leverx.blog.service.ArticleService;
 import ru.leverx.blog.service.CommentService;
+import ru.leverx.blog.service.TagService;
 import ru.leverx.blog.service.UserService;
 
 import java.util.Date;
@@ -21,11 +24,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final UserService userService;
+    private final TagService tagService;
 
     @Autowired
-    public ArticleServiceImpl(ArticleRepository repository, UserService service) {
+    public ArticleServiceImpl(ArticleRepository repository, UserService service, TagService tagService) {
         this.articleRepository = repository;
         this.userService = service;
+        this.tagService = tagService;
     }
 
     @Override
