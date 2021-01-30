@@ -3,6 +3,7 @@ package ru.leverx.blog.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.User;
 import ru.leverx.blog.repository.UserRepository;
 import ru.leverx.blog.service.UserService;
@@ -74,5 +75,10 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(password));
             userRepository.save(user);
         }
+    }
+
+    @Override
+    public User findByArticle(Article article) {
+        return userRepository.findByArticle(article);
     }
 }
