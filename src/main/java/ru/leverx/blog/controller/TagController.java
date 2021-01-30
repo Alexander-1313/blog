@@ -7,14 +7,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Tag;
+import ru.leverx.blog.entity.TagCount;
 import ru.leverx.blog.service.ArticleService;
 import ru.leverx.blog.service.TagService;
 import ru.leverx.blog.util.View;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class TagController {
@@ -47,5 +45,19 @@ public class TagController {
         }
 
         return articleResult;
+    }
+
+    @GetMapping("/tags-cloud")
+    public List<TagCount> getTagNameAndCount(){
+        List<Tag> tags = tagService.findAll();
+        List<TagCount> tagCounts = new ArrayList<>();
+
+        for(Tag t: tags){
+            long countTagById = tagService.getCountTagById(t.getId());
+            TagCount tagCount = new TagCount(t.getName(), countTagById);
+            tagCounts.add(tagCount);
+        }
+
+        return tagCounts;
     }
 }
