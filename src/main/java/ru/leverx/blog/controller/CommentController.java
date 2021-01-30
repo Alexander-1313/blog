@@ -38,12 +38,14 @@ public class CommentController {
     @JsonView(View.UI.class)
     public void addComment(@PathVariable String userId,
                            @PathVariable String articleId,
-                           @RequestParam("text") String text,
+                          @RequestBody Comment comment,
                            HttpServletRequest request){
-        if(requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.findById(Integer.parseInt(userId));
-            Article article = articleService.findById(Integer.parseInt(articleId));
-            Comment comment = new Comment(text, new Date(), user, article);
+        if(requestUtil.isConfirmUser(request, userId) && comment != null) {
+            User user = userService.findById(requestUtil.strToInt(userId));
+            Article article = articleService.findById(requestUtil.strToInt(articleId));
+            comment.setCreatedAt(new Date());
+            comment.setArticle(article);
+            comment.setCommentUser(user);
             commentService.save(comment);
         }
     }
@@ -54,26 +56,26 @@ public class CommentController {
                                               @PathVariable String articleId,
                                               @RequestParam Map<String, String> allRequestParam){
 
-        Integer skip = Integer.parseInt(allRequestParam.get("skip"));
-        Integer limit = Integer.parseInt(allRequestParam.get("limit"));
-        Integer authorId = Integer.parseInt(allRequestParam.get("authorId"));
+        Integer skip = requestUtil.strToInt(allRequestParam.get("skip"));
+        Integer limit = requestUtil.strToInt(allRequestParam.get("limit"));
+        Integer authorId = requestUtil.strToInt(allRequestParam.get("authorId"));
         String q = allRequestParam.get("q");
         String fieldName = allRequestParam.get("fieldName");
         String order = allRequestParam.get("order");
 
-        return commentService.filter(skip, limit, q, authorId, fieldName, order, Integer.parseInt(userId));
+        return commentService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.strToInt(userId));
     }
 
     @GetMapping("/{commentId}")
     @JsonView(View.UI.class)
     public Comment getCommentById(@PathVariable String userId,
                                   @PathVariable String articleId,
-                                  @PathVariable String commentId){ // валидация статьи и коммента
+                                  @PathVariable String commentId){
 
-        User user = userService.findById(Integer.parseInt(userId));
-        Article article = articleService.findById(Integer.parseInt(articleId));
+        User user = userService.findById(requestUtil.strToInt(userId));
+        Article article = articleService.findById(requestUtil.strToInt(articleId));
 
-        return commentService.findById(Integer.parseInt(commentId));
+        return commentService.findByIdAndUserAndArticle(requestUtil.strToInt(commentId), user, article);
     }
 
     @DeleteMapping("/{commentId}")
@@ -84,9 +86,9 @@ public class CommentController {
                                   HttpServletRequest request){
 
         if(requestUtil.isConfirmUser(request, userId)) {
-            Article article = articleService.findById(Integer.parseInt(articleId));
-            User user = userService.findById(Integer.parseInt(userId));
-            commentService.deleteCommentByIdAndArticleAndCommentUser(Integer.parseInt(commentId), article, user);
+            Article article = articleService.findById(requestUtil.strToInt(articleId));
+            User user = userService.findById(requestUtil.strToInt(userId));
+            commentService.deleteCommentByIdAndArticleAndCommentUser(requestUtil.strToInt(commentId), article, user);
         }
     }
 
