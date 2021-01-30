@@ -12,7 +12,7 @@ public interface ArticleService {
 
     void save(Article article);
 
-    void updateById(Integer articleId, Integer userId, String title, String text, String status);
+    void updateById(Integer articleId, Integer userId, Article article);
 
     List<Article> findByUser(User user);
 

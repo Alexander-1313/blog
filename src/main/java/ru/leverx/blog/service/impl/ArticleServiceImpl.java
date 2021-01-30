@@ -3,6 +3,7 @@ package ru.leverx.blog.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.query.JpaQueryCreator;
 import org.springframework.stereotype.Service;
+import ru.leverx.blog.comparator.ArticleComparator;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Status;
 import ru.leverx.blog.entity.Tag;
@@ -18,6 +19,7 @@ import ru.leverx.blog.service.UserService;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -39,7 +41,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article article = articleRepository.findByIdAndUser(articleId, user);
 
-        if(article != null) {
+        if (article != null) {
             articleRepository.deleteArticle(articleId);
         }
     }
@@ -52,23 +54,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void updateById(Integer articleId, Integer userId, String title, String text, String status) {
+    public void updateById(Integer articleId, Integer userId, Article article) {
         User user = userService.findById(userId);
-        Article article = articleRepository.findByIdAndUser(articleId, user);
-        if (article != null) {
-            if (title != null) {
-                article.setTitle(title);
+        Article articleDb = articleRepository.findByIdAndUser(articleId, user);
+        if (articleDb != null) {
+            if (article.getTitle() != null) {
+                articleDb.setTitle(article.getTitle());
             }
-            if (text != null) {
-                article.setText(text);
+            if (article.getText() != null) {
+                articleDb.setText(article.getText());
             }
-            if (status != null) {
-                article.setStatus(Status.valueOf(status));
+            if (article.getStatus() != null) {
+                articleDb.setStatus(article.getStatus());
             }
 
-            article.setUpdatedAt(new Date());
+            articleDb.setUpdatedAt(new Date());
 
-            articleRepository.save(article);
+            articleRepository.save(articleDb);
         }
     }
 
@@ -93,12 +95,24 @@ public class ArticleServiceImpl implements ArticleService {
         limit = (limit != null ? limit : 0);
         authorId = (authorId != null ? authorId : authorIdFromRequest);
         fieldName = (fieldName != null ? fieldName : "id");
-        order = (order.equalsIgnoreCase("asc") ? "asc" : "desc");
+        if(order != null) {
+            order = (order.equalsIgnoreCase("asc") ? "asc" : "desc");
+        }else{
+            order = "asc";
+        }
+        
+        List<Article> articles;
 
         if (q == null) {
-            return articleRepository.filterWithoutQ(authorId, fieldName, order, skip, limit);
-        }else{
-            return articleRepository.filterWithQ(q, authorId, fieldName, order, skip, limit);
+            articles = articleRepository.filterWithoutQ(authorId, fieldName, order, skip, limit);
+        } else {
+            articles = articleRepository.filterWithQ(q, authorId, fieldName, order, skip, limit);
+        }
+
+        if (order.equals("asc")) {
+            return articles.stream().sorted(ArticleComparator.valueOf(fieldName.toUpperCase(Locale.ROOT))).collect(Collectors.toList());
+        } else {
+            return articles.stream().sorted(ArticleComparator.valueOf(fieldName.toUpperCase(Locale.ROOT)).reversed()).collect(Collectors.toList());
         }
     }
 
