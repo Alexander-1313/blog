@@ -5,6 +5,8 @@ import lombok.Data;
 import ru.leverx.blog.util.View;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -17,18 +19,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(View.UI.class)
     private Integer id;
+
     @Column(name = "first_name")
     @JsonView(View.UI.class)
     private String firstName;
+
     @Column(name = "last_name")
     @JsonView(View.UI.class)
     private String lastName;
+
     @Column(name = "password")
     @JsonView(View.UI.class)
+    @NotNull
     private String password;
+
     @Column(name = "email")
     @JsonView(View.UI.class)
+    @NotNull
+    @Email(message = "mail has invalid message!")
     private String email;
+
     @Column(name = "created_at")
     @JsonView(View.UI.class)
     private Date createdAt;
