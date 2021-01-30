@@ -41,6 +41,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Comment findByIdAndUserAndArticle(Integer id, User user, Article article) {
+        return commentRepository.findByIdAndCommentUserAndArticle(id, user, article);
+    }
+
+    @Override
     public void deleteCommentByIdAndArticleAndCommentUser(Integer id, Article article, User user) {
         Comment comment = commentRepository.findByIdAndCommentUserAndArticle(id, user, article);
 

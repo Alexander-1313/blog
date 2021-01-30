@@ -12,6 +12,8 @@ public interface CommentService {
 
     Comment findById(Integer id);
 
+    Comment findByIdAndUserAndArticle(Integer id, User user, Article article);
+
     void deleteCommentByIdAndArticleAndCommentUser(Integer id, Article article, User user);
 
     List<Comment> filter(Integer skip, Integer limit, String q, Integer authId, String fieldName, String order, Integer authorIdFromRequest);
