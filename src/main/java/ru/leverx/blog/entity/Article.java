@@ -5,7 +5,9 @@ import lombok.Data;
 import ru.leverx.blog.util.View;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,13 +41,13 @@ public class Article {
     @JsonView(View.UI.class)
     private Date updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "article_tag",
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @JsonView(View.REST.class)
-    private Set<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
     @JsonView(View.REST.class)
@@ -65,6 +67,16 @@ public class Article {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public Article(String title, String text, Status status, Date createdAt, Date updatedAt, User user, List<Tag> tags) {
+        this.title = title;
+        this.text = text;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.user = user;
+        this.tags = tags;
     }
 
     public Article(String title, String text, Status status, Date createdAt, Date updatedAt, User user) {
