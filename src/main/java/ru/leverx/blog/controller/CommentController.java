@@ -52,7 +52,7 @@ public class CommentController {
     @JsonView(View.UI.class)
     public List<Comment> findCommentByArticle(@PathVariable String userId,
                                               @PathVariable String articleId,
-                                              @RequestParam Map<String, String> allRequestParam){ //TODO
+                                              @RequestParam Map<String, String> allRequestParam){
 
         Integer skip = Integer.parseInt(allRequestParam.get("skip"));
         Integer limit = Integer.parseInt(allRequestParam.get("limit"));
