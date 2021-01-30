@@ -36,20 +36,15 @@ public class ArticleController {
     @JsonView(View.UI.class)
     @PostMapping
     public Article addPost(@PathVariable String userId,
-                           @RequestParam("title") String title,
-                           @RequestParam("text") String text,
-                           @RequestParam("status") String status,
-                           @RequestParam("tags") Set<String> tags,
+                           @RequestBody Article article,
                            HttpServletRequest request){
-        Article article = null;
         List<Tag> tagSet = new ArrayList<>();
         Tag dbTag;
 
-        for(String tagName: tags){
-            dbTag = tagService.findByName(tagName);
+        for(Tag tag: article.getTags()){
+            dbTag = tagService.findByName(tag.getName());
 
             if(dbTag == null) {
-                Tag tag = new Tag(tagName);
                 tagSet.add(tag);
             }else{
                 tagSet.add(dbTag);
@@ -57,8 +52,11 @@ public class ArticleController {
         }
 
         if(requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.findById(Integer.parseInt(userId));
-            article = new Article(title, text, Status.valueOf(status), new Date(), new Date(), user, tagSet);
+            User user = userService.findById(requestUtil.strToInt(userId));
+            article.setUpdatedAt(new Date());
+            article.setCreatedAt(new Date());
+            article.setTags(tagSet);
+            article.setUser(user);
             articleService.save(article);
         }
         return article;
@@ -69,9 +67,9 @@ public class ArticleController {
     public List<Article> getAllPublicPosts(@PathVariable String userId,
                                            @RequestParam Map<String, String> allRequestParam) {
 
-        Integer skip = Integer.parseInt(allRequestParam.get("skip"));
-        Integer limit = Integer.parseInt(allRequestParam.get("limit"));
-        Integer authorId = Integer.parseInt(allRequestParam.get("authorId"));
+        Integer skip = requestUtil.strToInt(allRequestParam.get("skip"));
+        Integer limit = requestUtil.strToInt(allRequestParam.get("limit"));
+        Integer authorId = requestUtil.strToInt(allRequestParam.get("authorId"));
         String q = allRequestParam.get("q");
         String fieldName = allRequestParam.get("fieldName");
         String order = allRequestParam.get("order");
@@ -94,12 +92,10 @@ public class ArticleController {
     @PutMapping("/{id}")
     public void editArticleById(@PathVariable String userId,
                                 @PathVariable String id,
-                                @RequestParam("title") String title,
-                                @RequestParam("text") String text,
-                                @RequestParam("status") String status,
+                                @RequestBody Article article,
                                 HttpServletRequest request) {
         if (requestUtil.isConfirmUser(request, userId)) {
-            articleService.updateById(Integer.parseInt(id), Integer.parseInt(userId), title, text, status);
+            articleService.updateById(requestUtil.strToInt(id), requestUtil.strToInt(userId), article);
         }
     }
 
