@@ -21,4 +21,6 @@ public interface ArticleService {
     Article findByTitle(String title);
 
     List<Article> filter(Integer skip, Integer limit, String q, Integer authorId, String fieldName, String order, Integer authorIdFromRequest);
+
+    List<Article> findByTagId(Integer id);
 }

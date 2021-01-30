@@ -101,4 +101,9 @@ public class ArticleServiceImpl implements ArticleService {
             return articleRepository.filterWithQ(q, authorId, fieldName, order, skip, limit);
         }
     }
+
+    @Override
+    public List<Article> findByTagId(Integer id) {
+        return articleRepository.findByTagId(id);
+    }
 }

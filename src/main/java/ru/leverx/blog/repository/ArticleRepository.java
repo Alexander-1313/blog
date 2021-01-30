@@ -20,6 +20,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     Article findByTitle(String title);
 
+    @Modifying
+    @Query(value = "SELECT * FROM article a inner join article_tag t on a.id = t.article_id WHERE t.tag_id = ?1", nativeQuery = true)
+    List<Article> findByTagId(Integer id);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Article a WHERE a.id = :id")
