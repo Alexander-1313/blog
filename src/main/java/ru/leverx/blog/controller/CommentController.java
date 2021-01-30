@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users/{userId}/articles/{articleId}/comments")
+@RequestMapping("/articles/{articleId}/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -36,13 +36,14 @@ public class CommentController {
 
     @PostMapping
     @JsonView(View.UI.class)
-    public void addComment(@PathVariable String userId,
-                           @PathVariable String articleId,
+    public void addComment(@PathVariable String articleId,
                           @RequestBody Comment comment,
                            HttpServletRequest request){
-        if(requestUtil.isConfirmUser(request, userId) && comment != null) {
-            User user = userService.findById(requestUtil.strToInt(userId));
-            Article article = articleService.findById(requestUtil.strToInt(articleId));
+        Integer intArtId = requestUtil.strToInt(articleId);
+
+        if(requestUtil.hasAccess(request) && comment != null && requestUtil.hasArticle(request, intArtId)) {
+            User user = userService.findById(requestUtil.getUserIdByRequest(request));
+            Article article = articleService.findById(intArtId);
             comment.setCreatedAt(new Date());
             comment.setArticle(article);
             comment.setCommentUser(user);
@@ -52,9 +53,9 @@ public class CommentController {
 
     @GetMapping
     @JsonView(View.UI.class)
-    public List<Comment> findCommentByArticle(@PathVariable String userId,
-                                              @PathVariable String articleId,
-                                              @RequestParam Map<String, String> allRequestParam){
+    public List<Comment> findCommentByArticle(@PathVariable String articleId,
+                                              @RequestParam Map<String, String> allRequestParam,
+                                              HttpServletRequest request){ //TODO
 
         Integer skip = requestUtil.strToInt(allRequestParam.get("skip"));
         Integer limit = requestUtil.strToInt(allRequestParam.get("limit"));
@@ -63,16 +64,16 @@ public class CommentController {
         String fieldName = allRequestParam.get("fieldName");
         String order = allRequestParam.get("order");
 
-        return commentService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.strToInt(userId));
+        return commentService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.getUserIdByRequest(request));
     }
 
     @GetMapping("/{commentId}")
     @JsonView(View.UI.class)
-    public Comment getCommentById(@PathVariable String userId,
-                                  @PathVariable String articleId,
-                                  @PathVariable String commentId){
+    public Comment getCommentById(@PathVariable String articleId,
+                                  @PathVariable String commentId,
+                                  HttpServletRequest request){
 
-        User user = userService.findById(requestUtil.strToInt(userId));
+        User user = userService.findById(requestUtil.getUserIdByRequest(request));
         Article article = articleService.findById(requestUtil.strToInt(articleId));
 
         return commentService.findByIdAndUserAndArticle(requestUtil.strToInt(commentId), user, article);
@@ -80,14 +81,14 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @JsonView(View.UI.class)
-    public void deleteCommentById(@PathVariable String userId,
-                                  @PathVariable String articleId,
+    public void deleteCommentById(@PathVariable String articleId,
                                   @PathVariable String commentId,
                                   HttpServletRequest request){
+        Integer intArtId = requestUtil.strToInt(articleId);
 
-        if(requestUtil.isConfirmUser(request, userId)) {
-            Article article = articleService.findById(requestUtil.strToInt(articleId));
-            User user = userService.findById(requestUtil.strToInt(userId));
+        if(requestUtil.hasAccess(request) && requestUtil.hasArticle(request, intArtId)) {
+            Article article = articleService.findById(intArtId);
+            User user = userService.findById(requestUtil.getUserIdByRequest(request));
             commentService.deleteCommentByIdAndArticleAndCommentUser(requestUtil.strToInt(commentId), article, user);
         }
     }
