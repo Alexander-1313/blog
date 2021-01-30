@@ -11,6 +11,7 @@ import ru.leverx.blog.service.UserService;
 import ru.leverx.blog.util.RequestUtil;
 import ru.leverx.blog.util.View;
 
+import javax.mail.SendFailedException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -40,15 +41,13 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String registerUser(@RequestParam("firstName") String firstName,
-                             @RequestParam("lastName") String lastName,
-                             @RequestParam("email") String email,
-                             @RequestParam("password") String password) {
+    public String registerUser(@RequestBody User user) {
 
+        String email = user.getEmail();
         User dbUser = service.findByEmail(email);
 
-        if(dbUser == null) {
-            User user = new User(firstName, lastName, password, email, new Date());
+        if (dbUser == null) {
+            user.setCreatedAt(new Date());
             service.save(user);
             String token = jwtProvider.generateToken(email);
             redisService.save(token, email);
@@ -60,12 +59,11 @@ public class RegistrationController {
     }
 
     @GetMapping("/auth")
-    public String auth(@RequestParam("email") String email,
-                     @RequestParam("password") String password){
+    public String auth(@RequestBody User user){
 
-        User user = service.findByPasswordAndEmail(password, email);
+        User userDb = service.findByPasswordAndEmail(user.getPassword(), user.getEmail());
 
-        if(user != null && user.isEnabled()) {
+        if(userDb != null && userDb.isEnabled()) {
             String token = jwtProvider.generateToken(user.getEmail());
             return token;
         }
@@ -98,6 +96,7 @@ public class RegistrationController {
     @PostMapping("/auth/forgot_password")
     public void forgotPassword(@RequestParam("email") String email){
         if(email != null){
+            System.out.println(email);
             mailService.sendEmail(email, jwtProvider.generateToken(email), "/reset");
         }
     }
