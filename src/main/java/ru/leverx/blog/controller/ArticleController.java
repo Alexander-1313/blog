@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @RestController
-@RequestMapping("/users/{userId}/articles")
+@RequestMapping("/articles")
 public class ArticleController {
 
     private ArticleService articleService;
@@ -35,8 +35,7 @@ public class ArticleController {
 
     @JsonView(View.UI.class)
     @PostMapping
-    public Article addPost(@PathVariable String userId,
-                           @RequestBody Article article,
+    public Article addPost(@RequestBody Article article,
                            HttpServletRequest request){
         List<Tag> tagSet = new ArrayList<>();
         Tag dbTag;
@@ -51,8 +50,8 @@ public class ArticleController {
             }
         }
 
-        if(requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.findById(requestUtil.strToInt(userId));
+        if(requestUtil.hasAccess(request)) {
+            User user = userService.findById(requestUtil.getUserIdByRequest(request));
             article.setUpdatedAt(new Date());
             article.setCreatedAt(new Date());
             article.setTags(tagSet);
@@ -64,8 +63,8 @@ public class ArticleController {
 
     @JsonView(View.UI.class)
     @GetMapping
-    public List<Article> getAllPublicPosts(@PathVariable String userId,
-                                           @RequestParam Map<String, String> allRequestParam) {
+    public List<Article> getAllPublicPosts(@RequestParam Map<String, String> allRequestParam,
+                                           HttpServletRequest request) { //TODO
 
         Integer skip = requestUtil.strToInt(allRequestParam.get("skip"));
         Integer limit = requestUtil.strToInt(allRequestParam.get("limit"));
@@ -74,38 +73,34 @@ public class ArticleController {
         String fieldName = allRequestParam.get("fieldName");
         String order = allRequestParam.get("order");
 
-
-            return articleService.filter(skip, limit, q, authorId, fieldName, order, Integer.parseInt(userId));
+            return articleService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.getUserIdByRequest(request));
     }
 
     @JsonView(View.UI.class)
     @DeleteMapping("/{id}")
-    public void deleteArticleById(@PathVariable String userId,
-                                  @PathVariable String id,
+    public void deleteArticleById(@PathVariable String id,
                                   HttpServletRequest request) {
-        if (requestUtil.isConfirmUser(request, userId)) {
-            articleService.deleteById(Integer.parseInt(userId), Integer.parseInt(id));
+        if (requestUtil.hasAccess(request) && requestUtil.hasArticle(request, requestUtil.strToInt(id))) {
+            articleService.deleteById(requestUtil.getUserIdByRequest(request), requestUtil.strToInt(id));
         }
     }
 
     @JsonView(View.UI.class)
     @PutMapping("/{id}")
-    public void editArticleById(@PathVariable String userId,
-                                @PathVariable String id,
+    public void editArticleById(@PathVariable String id,
                                 @RequestBody Article article,
                                 HttpServletRequest request) {
-        if (requestUtil.isConfirmUser(request, userId)) {
-            articleService.updateById(requestUtil.strToInt(id), requestUtil.strToInt(userId), article);
+        if (requestUtil.hasAccess(request) && requestUtil.hasArticle(request, requestUtil.strToInt(id))) {
+            articleService.updateById(requestUtil.strToInt(id), requestUtil.getUserIdByRequest(request), article);
         }
     }
 
     @JsonView(View.UI.class)
     @GetMapping("/my")
-    public List<Article> getArticleByUser(@PathVariable String userId,
-                                          HttpServletRequest request){
+    public List<Article> getArticleByUser(HttpServletRequest request){
 
-        if (requestUtil.isConfirmUser(request, userId)) {
-            User user = userService.findById(Integer.parseInt(userId));
+        if (requestUtil.hasAccess(request)) {
+            User user = userService.findById(requestUtil.getUserIdByRequest(request));
             return articleService.findByUser(user);
         }else{
             return null;
