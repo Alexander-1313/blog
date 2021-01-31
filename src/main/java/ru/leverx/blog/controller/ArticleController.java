@@ -2,6 +2,8 @@ package ru.leverx.blog.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Status;
@@ -79,32 +81,38 @@ public class ArticleController {
 
     @JsonView(View.UI.class)
     @DeleteMapping("/{id}")
-    public void deleteArticleById(@PathVariable String id,
+    public ResponseEntity<?> deleteArticleById(@PathVariable String id,
                                   HttpServletRequest request) {
         if (requestUtil.hasAccess(request) && requestUtil.hasArticle(request, requestUtil.strToInt(id))) {
             articleService.deleteById(requestUtil.getUserIdByRequest(request), requestUtil.strToInt(id));
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
     }
 
     @JsonView(View.UI.class)
     @PutMapping("/{id}")
-    public void editArticleById(@PathVariable String id,
+    public ResponseEntity<?> editArticleById(@PathVariable String id,
                                 @RequestBody Article article,
                                 HttpServletRequest request) {
         if (requestUtil.hasAccess(request) && requestUtil.hasArticle(request, requestUtil.strToInt(id))) {
             articleService.updateById(requestUtil.strToInt(id), requestUtil.getUserIdByRequest(request), article);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
     }
 
     @JsonView(View.UI.class)
     @GetMapping("/my")
-    public List<Article> getArticleByUser(HttpServletRequest request){
+    public ResponseEntity<?> getArticleByUser(HttpServletRequest request){
 
         if (requestUtil.hasAccess(request)) {
             User user = userService.findById(requestUtil.getUserIdByRequest(request));
-            return articleService.findByUser(user);
+            return new ResponseEntity<>(articleService.findByUser(user), HttpStatus.OK);
         }else{
-            return null;
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 

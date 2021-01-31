@@ -2,6 +2,8 @@ package ru.leverx.blog.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.leverx.blog.entity.Article;
 import ru.leverx.blog.entity.Comment;
@@ -37,7 +39,7 @@ public class CommentController {
 
     @PostMapping
     @JsonView(View.UI.class)
-    public void addComment(@PathVariable String articleId,
+    public ResponseEntity<?> addComment(@PathVariable String articleId,
                           @RequestBody Comment comment,
                            HttpServletRequest request){
         Integer intArtId = requestUtil.strToInt(articleId);
@@ -49,6 +51,9 @@ public class CommentController {
             comment.setArticle(article);
             comment.setCommentUser(user);
             commentService.save(comment);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -82,15 +87,18 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @JsonView(View.UI.class)
-    public void deleteCommentById(@PathVariable String articleId,
-                                  @PathVariable String commentId,
-                                  HttpServletRequest request){
+    public ResponseEntity<?> deleteCommentById(@PathVariable String articleId,
+                                               @PathVariable String commentId,
+                                               HttpServletRequest request){
         Integer intArtId = requestUtil.strToInt(articleId);
 
         if(requestUtil.hasAccess(request) && requestUtil.hasArticle(request, intArtId)) {
             Article article = articleService.findById(intArtId);
             User user = userService.findById(requestUtil.getUserIdByRequest(request));
             commentService.deleteCommentByIdAndArticleAndCommentUser(requestUtil.strToInt(commentId), article, user);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 
