@@ -13,6 +13,8 @@ import ru.leverx.blog.util.View;
 
 import javax.mail.SendFailedException;
 import javax.servlet.http.HttpServletRequest;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +53,8 @@ public class RegistrationController {
             service.save(user);
             String token = jwtProvider.generateToken(email);
             redisService.save(token, email);
+            Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            redisService.save(email, format.format(new Date()));
             mailService.sendEmail(email, token, "/confirm");
             return token;
         }
@@ -87,8 +91,9 @@ public class RegistrationController {
     public void confirmRegistration(@RequestParam("token") String token){
 
         String email = redisService.getByToken(token);
+        String strDate = redisService.getDateByEmail(email);
 
-        if(email != null){
+        if(email != null && requestUtil.isDateAvailable(strDate)){
             service.registerByEmail(email);
         }
     }
