@@ -11,6 +11,9 @@ import ru.leverx.blog.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.springframework.util.StringUtils.hasText;
 import static ru.leverx.blog.configuration.jwt.JwtFilter.AUTHORIZATION;
 
@@ -77,5 +80,12 @@ public class RequestUtil {
             return Integer.parseInt(str);
         }
         return null;
+    }
+
+    public boolean isDateAvailable(String strDate){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.parse(strDate, formatter);
+        LocalDateTime newDate = date.plusHours(24);
+        return newDate.isAfter(LocalDateTime.now());
     }
 }
