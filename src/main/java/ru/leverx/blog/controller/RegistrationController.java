@@ -11,7 +11,6 @@ import ru.leverx.blog.service.UserService;
 import ru.leverx.blog.util.RequestUtil;
 import ru.leverx.blog.util.View;
 
-import javax.mail.SendFailedException;
 import javax.servlet.http.HttpServletRequest;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -101,7 +100,6 @@ public class RegistrationController {
     @PostMapping("/auth/forgot_password")
     public void forgotPassword(@RequestParam("email") String email){
         if(email != null){
-            System.out.println(email);
             mailService.sendEmail(email, jwtProvider.generateToken(email), "/reset");
         }
     }
@@ -117,9 +115,4 @@ public class RegistrationController {
         }
     }
 
-
-
-    /**
-     * auth/check_code/{code} GET
-     */
 }
