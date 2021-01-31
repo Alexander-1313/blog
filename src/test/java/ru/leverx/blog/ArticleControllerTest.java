@@ -35,10 +35,4 @@ public class ArticleControllerTest {
                 .andExpect(authenticated());
     }
 
-//    @Test
-//    public void getMyArticles() throws Exception{
-//        this.mockMvc.perform(get("/articles/my"))
-//                .andDo(print())
-//                .andExpect(authenticated());
-//    }
 }
