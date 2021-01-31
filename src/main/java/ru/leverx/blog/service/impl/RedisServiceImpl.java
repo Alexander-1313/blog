@@ -26,5 +26,10 @@ public class RedisServiceImpl implements RedisService {
         return jedis.get(token);
     }
 
+    @Override
+    public String getDateByEmail(String email){
+        return jedis.get(email);
+    }
+
 
 }
