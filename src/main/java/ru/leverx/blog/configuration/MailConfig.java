@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import ru.leverx.blog.util.StringConstant;
 
 import java.util.Properties;
 
@@ -16,8 +17,8 @@ public class MailConfig {
         mailSender.setHost("smtp.mail.ru");
         mailSender.setPort(587);
 
-        mailSender.setUsername("test.alexander.rybak@mail.ru");
-        mailSender.setUsername("a16171819");
+        mailSender.setUsername(StringConstant.EMAIL_NAME);
+        mailSender.setPassword(StringConstant.EMAIL_PASSWORD);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
+import ru.leverx.blog.util.StringConstant;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,21 +14,19 @@ import java.util.Date;
 @Log
 public class JwtProvider {
 
-    @Value("$(jwt.secret)")
-    private String jwtSecret;
 
     public String generateToken(String email) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(date)
-                .signWith(SignatureAlgorithm.HS512, "rybak")
+                .signWith(SignatureAlgorithm.HS512, StringConstant.JWT_SECREAT)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey("rybak").parseClaimsJws(token);
+            Jwts.parser().setSigningKey(StringConstant.JWT_SECREAT).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
             log.severe("Token expired");
@@ -44,7 +43,7 @@ public class JwtProvider {
     }
 
     public String getLoginFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey("rybak").parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(StringConstant.JWT_SECREAT).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
 }

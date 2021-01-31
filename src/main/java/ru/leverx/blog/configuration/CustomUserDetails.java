@@ -16,7 +16,6 @@ public class CustomUserDetails implements UserDetails {
         CustomUserDetails c = new CustomUserDetails();
         c.email = user.getEmail();
         c.password = user.getPassword();
-//        c.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(userEntity.getRoleEntity().getName()));
         return c;
     }
 

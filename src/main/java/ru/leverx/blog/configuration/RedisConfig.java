@@ -7,6 +7,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import redis.clients.jedis.Jedis;
+import ru.leverx.blog.util.StringConstant;
 
 @Configuration
 @ComponentScan("ru.leverx.blog")
@@ -27,6 +28,6 @@ public class RedisConfig {
 
     @Bean("jedis")
     Jedis getJedis(){
-        return new Jedis("localhost");
+        return new Jedis(StringConstant.JEDIS_HOST);
     }
 }

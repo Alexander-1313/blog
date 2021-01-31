@@ -10,6 +10,7 @@ import ru.leverx.blog.service.ArticleService;
 import ru.leverx.blog.service.CommentService;
 import ru.leverx.blog.service.UserService;
 import ru.leverx.blog.util.RequestUtil;
+import ru.leverx.blog.util.StringConstant;
 import ru.leverx.blog.util.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,12 +58,12 @@ public class CommentController {
                                               @RequestParam Map<String, String> allRequestParam,
                                               HttpServletRequest request){ //TODO
 
-        Integer skip = requestUtil.strToInt(allRequestParam.get("skip"));
-        Integer limit = requestUtil.strToInt(allRequestParam.get("limit"));
-        Integer authorId = requestUtil.strToInt(allRequestParam.get("authorId"));
-        String q = allRequestParam.get("q");
-        String fieldName = allRequestParam.get("fieldName");
-        String order = allRequestParam.get("order");
+        Integer skip = requestUtil.strToInt(allRequestParam.get(StringConstant.SKIP));
+        Integer limit = requestUtil.strToInt(allRequestParam.get(StringConstant.LIMIT));
+        Integer authorId = requestUtil.strToInt(allRequestParam.get(StringConstant.AUTHOR_ID));
+        String q = allRequestParam.get(StringConstant.Q);
+        String fieldName = allRequestParam.get(StringConstant.FIELD_NAME);
+        String order = allRequestParam.get(StringConstant.ORDER);
 
         return commentService.filter(skip, limit, q, authorId, fieldName, order, requestUtil.getUserIdByRequest(request));
     }
